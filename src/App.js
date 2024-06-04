@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import "./App.css";
 import { Navbar } from "./layouts/Navbar";
 import Users from "./users/Users";
+import Search from "./users/Search";
 
 function App() {
   const [users, setUsers] = useState([]);
@@ -22,8 +23,9 @@ function App() {
       <Navbar />
       <div className="container">
         <h1>GitHub Users Data</h1>
+        <Search />
       </div>
-      <Users users={users} />
+      {/* <Users users={users} /> */}
     </div>
   );
 }
