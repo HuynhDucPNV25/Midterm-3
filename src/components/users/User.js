@@ -1,6 +1,6 @@
-import axios from "axios";
 import React, { Fragment, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom/cjs/react-router-dom.min";
+import { get } from "../../apis/api";
 import Repos from "../repos/Repos";
 
 export const User = () => {
@@ -9,29 +9,19 @@ export const User = () => {
   const [repos, setRepos] = useState([]);
   const getUser = async (username) => {
     try {
-      const response = await axios.get(
-        `https://api.github.com/users/${username}`
-      );
-      const data = response.data;
-      setUser(data);
+      const response = await get(`users/${username}`);
+      setUser(response);
     } catch (error) {
       console.error("Error fetching data:", error.message);
     }
   };
   const getUserRepos = async (username) => {
-    // To be completed ...
-    // This is the small exercise for students
-    // Students will write the code to fetch the user's repositories
-    // Then display the repositories in the User component
     try {
-        const response = await axios.get(
-          `https://api.github.com/users/${username}/repos`
-        );
-        const data = response.data;
-        setRepos(data);
-      } catch (error) {
-        console.error("Error fetching data:", error.message);
-      }
+      const response = await get(`users/${username}/repos`);
+      setRepos(response);
+    } catch (error) {
+      console.error("Error fetching data:", error.message);
+    }
   };
   useEffect(() => {
     getUser(id);
