@@ -4,10 +4,12 @@ import About from "../pages/About";
 import NotFound from "../pages/NotFound";
 import Search from "../users/Search";
 import User from "../users/User";
+import { Toggle } from "../Toggle";
 
 const Home = () => {
   return (
     <div className="container">
+      <Toggle/>
       <Switch>
         <Route exact path="/" component={Search} />
         <Route exact path="/about" component={About} />
