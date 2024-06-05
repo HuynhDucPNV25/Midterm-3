@@ -1,42 +1,67 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { get } from "../../apis/api";
 import Users from "./Users";
-import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
 export const Search = () => {
-  const [text, setText] = useState("");
-  const [users, setUsers] = useState([]);
+  const [query, setQuery] = useState("");
+  const [searchedData, setSearchedData] = useState([]);
   const history = useHistory();
-  const searchUsers = async (text) => {
+
+  useEffect(() => {
+    const searchDataFromStorage = JSON.parse(
+      localStorage.getItem("searchedData")
+    );
+    const searchQueryFromStorage = JSON.parse(
+      localStorage.getItem("searchQuery")
+    );
+    if (searchDataFromStorage && searchQueryFromStorage) {
+      setSearchedData(searchDataFromStorage);
+      setQuery(searchQueryFromStorage);
+      history.push(`/?query=${searchQueryFromStorage}`);
+    }
+  }, [history]);
+
+  async function searchUsers() {
     try {
-      const response = await get(`search/users?q=${text} `);
-      setUsers(response.items);
+      const response = await get(`search/users?q=${query} `);
+      setSearchedData(response.items);
+      localStorage.setItem("searchQuery", JSON.stringify(query));
+      localStorage.setItem("searchedData", JSON.stringify(response.items));
     } catch (error) {
       console.error("Error fetching data:", error);
     }
-  };
+  }
+
   const clearUsers = () => {
-    setUsers([]);
+    setSearchedData([]);
+    setQuery("");
+    localStorage.removeItem("searchQuery");
+    localStorage.removeItem("searchedData");
+    history.push('');
   };
+
   const onSubmit = (e) => {
     e.preventDefault();
-    if (text === "") {
+    if (query === "") {
       alert("Please enter something");
     } else {
-      searchUsers(text);
-      history.push(`/?query=${text}`);
-      setText("");
+      searchUsers();
+      history.push(`/?query=${query}`);
+      setQuery("");
     }
   };
-  const onChange = (e) => setText(e.target.value);
+
+  const onChange = (e) => setQuery(e.target.value);
+
   return (
     <div>
       <form onSubmit={onSubmit} className="form">
         <input
           type="text"
           name="text"
-          placeholder="Search User"
-          value={text}
+          placeholder={query ? query : "Search User"}
+          value={query}
           onChange={onChange}
         />
         <input
@@ -45,12 +70,12 @@ export const Search = () => {
           className="btn btn-success btn-block"
         />
       </form>
-      {users.length > 0 && (
+      {searchedData.length > 0 && (
         <button className="btn btn-danger btn-block" onClick={clearUsers}>
           Clear
         </button>
       )}
-      <Users users={users} />
+      <Users users={searchedData} />
     </div>
   );
 };
