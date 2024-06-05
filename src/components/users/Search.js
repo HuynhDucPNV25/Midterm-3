@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { get } from "../../apis/api";
 import Users from "./Users";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
 export const Search = () => {
   const [text, setText] = useState("");
   const [users, setUsers] = useState([]);
+  const history = useHistory();
   const searchUsers = async (text) => {
     try {
       const response = await get(`search/users?q=${text} `);
@@ -22,6 +24,7 @@ export const Search = () => {
       alert("Please enter something");
     } else {
       searchUsers(text);
+      history.push(`/?query=${text}`);
       setText("");
     }
   };
